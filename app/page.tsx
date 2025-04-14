@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 
 export default function Home() {
   return (
@@ -33,6 +34,35 @@ export default function Home() {
               </SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="flex space-x-4 mb-4">
+          <div className="flex-1">
+            <div className="text-xs mb-2">ATC</div>
+            <Slider
+              defaultValue={[10]}
+              max={100}
+              step={1}
+              className="bg-white rounded-2xl"
+            />
+          </div>
+          <div className="flex-1">
+            <div className="text-xs mb-2">LOFI</div>
+            <Slider
+              defaultValue={[10]}
+              max={100}
+              step={1}
+              className="bg-white rounded-2xl"
+            />
+          </div>
+        </div>
+        <div className="mt-4 text-xs text-center flex items-center justify-center gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <div className="size-2.5 rounded-full bg-green-400 animate-ping absolute" />
+              <div className="size-2.5 rounded-full bg-green-400" />
+            </div>
+            SFO // LIVE
+          </div>
         </div>
       </div>
     </div>
