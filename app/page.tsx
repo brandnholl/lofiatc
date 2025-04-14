@@ -103,14 +103,14 @@ export default function Home() {
         loop
         suppressHydrationWarning
       />
-      <div className="h-screen w-screen flex items-center justify-center">
-        <div className="rounded-lg border p-4">
-          <h1 className="text-xl mb-4 text-center tracking-tight text-balance">
+      <div className="h-screen w-screen flex items-center justify-center p-4">
+        <div className="rounded-lg border p-4 w-full max-w-md">
+          <h1 className="text-xl md:text-2xl mb-4 text-center tracking-tight text-balance font-medium">
             Lofi ATC
           </h1>
           <div className="mb-4">
             <Select defaultValue="sfo-tower">
-              <SelectTrigger className="w-full min-w-96">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select ATC feed" />
               </SelectTrigger>
               <SelectContent className="bg-black">
@@ -129,7 +129,7 @@ export default function Home() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex space-x-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-4">
             <div className="flex-1">
               <div className="text-xs mb-2">ATC</div>
               <Slider
