@@ -18,7 +18,8 @@ export default function Home() {
 
   // Create stable audio URLs that won't change on re-renders
   const atcAudioUrl = useRef(
-    `https://s1-fmt2.liveatc.net/ksfo_twr?nocache=${Date.now()}`
+    // Use a relative URL to your own API endpoint that will proxy the request
+    `/api/atc-proxy?station=ksfo_twr&nocache=${Date.now()}`
   );
 
   const lofiAudioUrl =
