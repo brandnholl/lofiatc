@@ -7,23 +7,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { lofiTracks } from "@/data/lofi";
 import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [atcVolume, setAtcVolume] = useState(0);
   const [lofiVolume, setLofiVolume] = useState(0);
   const [userInteracted, setUserInteracted] = useState(false);
+  const [currentLofiIndex, setCurrentLofiIndex] = useState(() =>
+    Math.floor(Math.random() * lofiTracks.length)
+  );
   const atcAudioRef = useRef<HTMLAudioElement>(null);
   const lofiAudioRef = useRef<HTMLAudioElement>(null);
 
-  // Create stable audio URLs that won't change on re-renders
   const atcAudioUrl = useRef(
-    // Use a relative URL to your own API endpoint that will proxy the request
     `/api/atc-proxy?station=ksfo_twr&nocache=${Date.now()}`
   );
 
-  const lofiAudioUrl =
-    "https://cdn.lofiatc.brandonhol.land/lofi/2GjPQfdQfMY.mp3";
+  const currentLofiUrl = lofiTracks[currentLofiIndex].url;
+
   useEffect(() => {
     const handleInteraction = () => {
       setUserInteracted(true);
@@ -43,7 +45,6 @@ export default function Home() {
     };
   }, []);
 
-  // ATC audio control
   useEffect(() => {
     const atcAudio = atcAudioRef.current;
     if (!atcAudio || !userInteracted) return;
@@ -58,18 +59,21 @@ export default function Home() {
           .catch((e) => console.error("ATC audio play failed:", e));
       }
     } else {
-      // Just mute the audio instead of pausing it
       atcAudio.muted = true;
     }
 
-    // Don't pause in the cleanup function for ATC
     return () => {};
   }, [atcVolume, userInteracted]);
 
-  // Lofi audio control
   useEffect(() => {
     const lofiAudio = lofiAudioRef.current;
     if (!lofiAudio || !userInteracted) return;
+
+    const handleTrackEnded = () => {
+      setCurrentLofiIndex((prevIndex) => (prevIndex + 1) % lofiTracks.length);
+    };
+
+    lofiAudio.addEventListener("ended", handleTrackEnded);
 
     lofiAudio.volume = lofiVolume / 100;
 
@@ -85,9 +89,10 @@ export default function Home() {
     }
 
     return () => {
+      lofiAudio.removeEventListener("ended", handleTrackEnded);
       lofiAudio.pause();
     };
-  }, [lofiVolume, userInteracted]);
+  }, [lofiVolume, userInteracted, currentLofiIndex]);
 
   return (
     <>
@@ -99,9 +104,8 @@ export default function Home() {
       />
       <audio
         ref={lofiAudioRef}
-        src={lofiAudioUrl}
+        src={currentLofiUrl}
         muted
-        loop
         suppressHydrationWarning
       />
       <div className="h-screen w-screen flex items-center justify-center p-4">
