@@ -14,6 +14,7 @@ export default function Home() {
   const [atcVolume, setAtcVolume] = useState(0);
   const [lofiVolume, setLofiVolume] = useState(0);
   const [userInteracted, setUserInteracted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [currentLofiIndex, setCurrentLofiIndex] = useState(() =>
     Math.floor(Math.random() * lofiTracks.length)
   );
@@ -25,6 +26,18 @@ export default function Home() {
   );
 
   const currentLofiUrl = lofiTracks[currentLofiIndex].url;
+
+  useEffect(() => {
+    // Check if the device is mobile
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent;
+      return /android|iPad|iPhone|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
+        userAgent
+      );
+    };
+
+    setIsMobile(checkMobile());
+  }, []);
 
   useEffect(() => {
     const handleInteraction = () => {
@@ -93,6 +106,32 @@ export default function Home() {
       lofiAudio.pause();
     };
   }, [lofiVolume, userInteracted, currentLofiIndex]);
+
+  if (isMobile) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center p-6">
+        <div className="rounded-lg border p-6 w-full max-w-md text-center">
+          <h1 className="text-xl md:text-2xl mb-4 font-medium">Lofi ATC</h1>
+          <div className="mb-4">
+            <div className="relative mx-auto w-16 h-16 mb-4">
+              <div className="size-16 rounded-full bg-red-400 opacity-20" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-2xl">🔇</span>
+              </div>
+            </div>
+            <p className="text-sm mb-4">
+              Unfortunately, Lofi ATC doesn{"'"}t work on mobile devices due to
+              the limitations of mobile browser APIs.
+            </p>
+            <p className="text-sm">
+              Please open this site on a desktop computer to enjoy the full
+              experience.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
