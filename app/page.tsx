@@ -21,14 +21,11 @@ export default function Home() {
   const atcAudioRef = useRef<HTMLAudioElement>(null);
   const lofiAudioRef = useRef<HTMLAudioElement>(null);
 
-  const atcAudioUrl = useRef(
-    `/api/atc-proxy?station=ksfo_twr&nocache=${Date.now()}`
-  );
+  const atcAudioUrl = useRef<string | null>(null);
 
   const currentLofiUrl = lofiTracks[currentLofiIndex].url;
 
   useEffect(() => {
-    // Check if the device is mobile
     const checkMobile = () => {
       const userAgent = navigator.userAgent;
       return /android|iPad|iPhone|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -36,7 +33,12 @@ export default function Home() {
       );
     };
 
-    setIsMobile(checkMobile());
+    const isMobileDevice = checkMobile();
+    setIsMobile(isMobileDevice);
+    
+    if (!isMobileDevice) {
+      atcAudioUrl.current = `/api/atc-proxy?station=ksfo_twr&nocache=${Date.now()}`;
+    }
   }, []);
 
   useEffect(() => {
@@ -109,22 +111,22 @@ export default function Home() {
 
   if (isMobile) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center p-6">
-        <div className="rounded-lg border p-6 w-full max-w-md text-center">
-          <h1 className="text-xl md:text-2xl mb-4 font-medium">Lofi ATC</h1>
-          <div className="mb-4">
-            <div className="relative mx-auto w-16 h-16 mb-4">
+      <div className="h-screen w-screen flex items-center justify-center overflow-hidden">
+        <div className="rounded-lg border p-5 w-full max-w-md text-center mx-4">
+          <h1 className="text-xl mb-4 font-medium">Lofi ATC</h1>
+          <div className="mb-2">
+            <div className="relative mx-auto w-16 h-16 mb-3">
               <div className="size-16 rounded-full bg-red-400 opacity-20" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-2xl">🔇</span>
               </div>
             </div>
-            <p className="text-sm mb-4">
-              Unfortunately, Lofi ATC doesn{"'"}t work on mobile devices due to
+            <p className="text-sm mb-3">
+              Lofi ATC does not work on mobile devices due to
               the limitations of mobile browser APIs.
             </p>
             <p className="text-sm">
-              Please open this site on a desktop computer to enjoy the full
+              Please open this site on a computer to enjoy the full
               experience.
             </p>
           </div>
@@ -135,12 +137,14 @@ export default function Home() {
 
   return (
     <>
-      <audio
-        ref={atcAudioRef}
-        src={atcAudioUrl.current}
-        muted
-        suppressHydrationWarning
-      />
+      {atcAudioUrl.current && (
+        <audio
+          ref={atcAudioRef}
+          src={atcAudioUrl.current}
+          muted
+          suppressHydrationWarning
+        />
+      )}
       <audio
         ref={lofiAudioRef}
         src={currentLofiUrl}
